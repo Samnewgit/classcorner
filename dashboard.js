@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Show welcome toast
+    showToast();
+
     // Initialize dashboard
     displayAllPDFs();
     setupEventListeners();
@@ -14,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // DOM Elements
 const uploadForm = document.getElementById('uploadForm');
 const adminPdfList = document.getElementById('adminPdfList');
-const logoutBtn = document.getElementById('logoutBtn');
+const toast = document.getElementById('loginSuccessToast');
 
 // Function to format date as dd/mm/yyyy
 function formatDate(dateString) {
@@ -24,6 +27,14 @@ function formatDate(dateString) {
         month: '2-digit',
         year: 'numeric'
     });
+}
+
+// Function to show welcome toast
+function showToast() {
+    toast.style.display = 'block';
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 3000);
 }
 
 // Function to add a new PDF
@@ -43,7 +54,7 @@ function addPDF(class_, title, link, isPublic = true) {
     displayAllPDFs();
 }
 
-// Function to display all PDFs (including private ones)
+// Function to display all PDFs
 function displayAllPDFs() {
     adminPdfList.innerHTML = '';
     const pdfs = JSON.parse(localStorage.getItem('pdfs')) || [];
@@ -52,18 +63,23 @@ function displayAllPDFs() {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${index + 1}</td>
+            <td><a href="${pdf.link}" target="_blank">${pdf.title}</a></td>
             <td>${pdf.class || 'N/A'}</td>
             <td>${formatDate(pdf.createdAt)}</td>
-            <td><a href="${pdf.link}" target="_blank">${pdf.title}</a></td>
-            <td class="${pdf.isPublic ? 'status-public' : 'status-private'}">
-                ${pdf.isPublic ? 'Public' : 'Private'}
+            <td>
+                <label class="switch-label">
+                    <input type="checkbox" ${pdf.isPublic ? 'checked' : ''} onchange="toggleVisibility(${pdf.id})">
+                    <span class="switch-slider"></span>
+                </label>
             </td>
             <td>
-                <div class="pdf-actions">
-                    <button onclick="toggleVisibility(${pdf.id})" class="action-btn">
-                        ${pdf.isPublic ? 'Make Private' : 'Make Public'}
+                <div class="action-btn-group">
+                    <button onclick="window.open('${pdf.link}', '_blank')" class="action-btn view-btn">
+                        <i class="fas fa-eye"></i> View
                     </button>
-                    <button onclick="deletePDF(${pdf.id})" class="action-btn delete">Delete</button>
+                    <button onclick="deletePDF(${pdf.id})" class="action-btn delete-btn">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
                 </div>
             </td>
         `;
@@ -84,11 +100,6 @@ function setupEventListeners() {
         addPDF(class_, title, link, isPublic);
         uploadForm.reset();
     });
-
-    logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('isAuthenticated');
-        window.location.href = 'index.html';
-    });
 }
 
 // Function to toggle PDF visibility
@@ -106,7 +117,7 @@ function toggleVisibility(id) {
 
 // Function to delete PDF
 function deletePDF(id) {
-    if (confirm('Are you sure you want to delete this PDF?')) {
+    if (confirm('Are you sure you want to delete this document?')) {
         let pdfs = JSON.parse(localStorage.getItem('pdfs')) || [];
         pdfs = pdfs.filter(pdf => pdf.id !== id);
         localStorage.setItem('pdfs', JSON.stringify(pdfs));
