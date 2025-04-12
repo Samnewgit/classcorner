@@ -41,8 +41,8 @@ window.addEventListener('hashchange', checkHash);
 window.addEventListener('load', checkHash);
 
 function checkHash() {
-    // Secret hash: #admin-2024
-    if (window.location.hash === '#admin-2024') {
+    // Accept both hash formats: #admin-2024 and #2024-admin
+    if (window.location.hash === '#admin-2024' || window.location.hash === '#2024-admin') {
         loginModal.style.display = 'block';
         window.location.hash = ''; // Clear hash
     }
