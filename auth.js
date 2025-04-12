@@ -1,5 +1,5 @@
 // Authentication state
-let isAuthenticated = false;
+let isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
 
 // DOM Elements
 const loginBtn = document.getElementById('loginBtn');
@@ -73,9 +73,14 @@ loginForm.addEventListener('submit', (e) => {
     if (username === 'Camus' && otp === '12may') {
         isAuthenticated = true;
         localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('username', username);
         loginModal.style.display = 'none';
         loginBtn.textContent = 'Logout';
-        window.location.href = 'dashboard.html';
+        
+        // Use absolute path for dashboard
+        const currentPath = window.location.pathname;
+        const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+        window.location.href = basePath + 'dashboard.html';
     } else {
         alert('Invalid credentials');
     }
@@ -84,28 +89,37 @@ loginForm.addEventListener('submit', (e) => {
 // Check authentication status on page load
 document.addEventListener('DOMContentLoaded', () => {
     const authStatus = localStorage.getItem('isAuthenticated');
+    const currentPath = window.location.pathname;
+    
     if (authStatus === 'true') {
         isAuthenticated = true;
         loginBtn.textContent = 'Logout';
-        if (window.location.pathname.includes('dashboard.html')) {
-            // Already on dashboard
+        
+        if (currentPath.includes('dashboard.html')) {
+            // Already on dashboard, do nothing
             return;
-        } else if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+        } else if (currentPath.endsWith('index.html') || currentPath.endsWith('/')) {
             // Redirect to dashboard if on main page
-            window.location.href = 'dashboard.html';
+            const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+            window.location.href = basePath + 'dashboard.html';
         }
-    } else if (window.location.pathname.includes('dashboard.html')) {
+    } else if (currentPath.includes('dashboard.html')) {
         // Not authenticated and trying to access dashboard
-        window.location.href = 'index.html';
+        const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+        window.location.href = basePath + 'index.html';
     }
 
     // Handle logout
-    loginBtn.addEventListener('click', () => {
-        if (isAuthenticated) {
-            isAuthenticated = false;
-            localStorage.removeItem('isAuthenticated');
-            loginBtn.textContent = 'Login';
-            window.location.href = 'index.html';
-        }
-    });
+    if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+            if (isAuthenticated) {
+                isAuthenticated = false;
+                localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('username');
+                loginBtn.textContent = 'Login';
+                const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+                window.location.href = basePath + 'index.html';
+            }
+        });
+    }
 }); 
