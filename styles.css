@@ -1,0 +1,291 @@
+/* Import Space Grotesk font */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --accent-color: #3498db;
+    --accent-hover: #2980b9;
+    --border-color: #404040;
+}
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    line-height: 1.4;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    font-size: 14px;
+}
+
+/* Header styles */
+header {
+    background-color: var(--bg-secondary);
+    padding: 0.5rem;
+    color: var(--text-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.header-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-title {
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Button styles */
+.login-btn, .action-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    background-color: var(--accent-color);
+    color: var(--text-primary);
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.8rem;
+}
+
+.login-btn:hover, .action-btn:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.action-btn.delete {
+    background-color: #e74c3c;
+}
+
+.action-btn.delete:hover {
+    background-color: #c0392b;
+}
+
+/* Main content styles */
+.container {
+    max-width: 1000px;
+    margin: 1rem auto;
+    padding: 0 0.5rem;
+}
+
+/* Table styles */
+.pdf-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+    background-color: var(--bg-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 0.9rem;
+}
+
+.pdf-table th,
+.pdf-table td {
+    padding: 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pdf-table th {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+}
+
+/* Column width classes */
+.column-small {
+    width: 10%;
+}
+
+.column-medium {
+    width: 20%;
+}
+
+.column-large {
+    width: 60%;
+}
+
+.pdf-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.pdf-table a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.pdf-table a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+/* Form styles */
+.form-group {
+    margin-bottom: 0.8rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.form-group input {
+    font-family: 'Space Grotesk', sans-serif;
+    width: 100%;
+    padding: 0.4rem;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: border-color 0.3s;
+    font-size: 0.9rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+/* Upload form styles */
+.upload-form {
+    background-color: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    max-width: 400px;
+}
+
+.upload-form h3 {
+    margin-bottom: 0.8rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: var(--bg-secondary);
+    margin: 15% auto;
+    padding: 1rem;
+    width: 90%;
+    max-width: 300px;
+    border-radius: 4px;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+    position: absolute;
+    right: 0.8rem;
+    top: 0.4rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color 0.3s;
+}
+
+.close:hover {
+    color: var(--text-primary);
+}
+
+/* Status indicators */
+.status-public {
+    color: #2ecc71;
+    font-size: 0.9rem;
+}
+
+.status-private {
+    color: #e74c3c;
+    font-size: 0.9rem;
+}
+
+/* Action buttons container */
+.pdf-actions {
+    display: flex;
+    gap: 0.3rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .login-btn {
+        width: 100%;
+        max-width: 150px;
+    }
+
+    .pdf-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .pdf-table th,
+    .pdf-table td {
+        padding: 0.4rem;
+    }
+
+    /* Adjust column widths for mobile */
+    .column-small {
+        width: auto;
+        min-width: 50px;
+    }
+
+    .column-medium {
+        width: auto;
+        min-width: 100px;
+    }
+
+    .column-large {
+        width: auto;
+        min-width: 200px;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 30% auto;
+        padding: 1rem;
+    }
+
+    .container {
+        padding: 0 0.3rem;
+    }
+} 
