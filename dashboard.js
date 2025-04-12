@@ -1,3 +1,6 @@
+// API endpoint
+const API_URL = 'https://your-worker.your-subdomain.workers.dev/api/pdfs';
+
 // Check authentication
 document.addEventListener('DOMContentLoaded', () => {
     const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
@@ -37,9 +40,39 @@ function showToast() {
     }, 3000);
 }
 
+// Function to fetch all PDFs
+async function fetchPDFs() {
+    try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Failed to fetch PDFs');
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching PDFs:', error);
+        return [];
+    }
+}
+
+// Function to save PDFs
+async function savePDFs(pdfs) {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(pdfs)
+        });
+        if (!response.ok) throw new Error('Failed to save PDFs');
+        return true;
+    } catch (error) {
+        console.error('Error saving PDFs:', error);
+        return false;
+    }
+}
+
 // Function to add a new PDF
-function addPDF(class_, title, link, isPublic = true) {
-    let pdfs = JSON.parse(localStorage.getItem('pdfs')) || [];
+async function addPDF(class_, title, link, isPublic = true) {
+    const pdfs = await fetchPDFs();
     const newPDF = {
         id: Date.now(),
         class: class_,
@@ -50,15 +83,16 @@ function addPDF(class_, title, link, isPublic = true) {
     };
     
     pdfs.push(newPDF);
-    localStorage.setItem('pdfs', JSON.stringify(pdfs));
+    await savePDFs(pdfs);
     displayAllPDFs();
 }
 
 // Function to display all PDFs
-function displayAllPDFs() {
-    adminPdfList.innerHTML = '';
-    const pdfs = JSON.parse(localStorage.getItem('pdfs')) || [];
+async function displayAllPDFs() {
+    adminPdfList.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
+    const pdfs = await fetchPDFs();
     
+    adminPdfList.innerHTML = '';
     pdfs.forEach((pdf, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -89,7 +123,7 @@ function displayAllPDFs() {
 
 // Function to setup event listeners
 function setupEventListeners() {
-    uploadForm.addEventListener('submit', (e) => {
+    uploadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const class_ = document.getElementById('pdfClass').value;
@@ -97,30 +131,30 @@ function setupEventListeners() {
         const link = document.getElementById('pdfLink').value;
         const isPublic = document.getElementById('isPublic').checked;
         
-        addPDF(class_, title, link, isPublic);
+        await addPDF(class_, title, link, isPublic);
         uploadForm.reset();
     });
 }
 
 // Function to toggle PDF visibility
-function toggleVisibility(id) {
-    let pdfs = JSON.parse(localStorage.getItem('pdfs')) || [];
-    pdfs = pdfs.map(pdf => {
+async function toggleVisibility(id) {
+    const pdfs = await fetchPDFs();
+    const updatedPdfs = pdfs.map(pdf => {
         if (pdf.id === id) {
             return { ...pdf, isPublic: !pdf.isPublic };
         }
         return pdf;
     });
-    localStorage.setItem('pdfs', JSON.stringify(pdfs));
+    await savePDFs(updatedPdfs);
     displayAllPDFs();
 }
 
 // Function to delete PDF
-function deletePDF(id) {
+async function deletePDF(id) {
     if (confirm('Are you sure you want to delete this document?')) {
-        let pdfs = JSON.parse(localStorage.getItem('pdfs')) || [];
-        pdfs = pdfs.filter(pdf => pdf.id !== id);
-        localStorage.setItem('pdfs', JSON.stringify(pdfs));
+        const pdfs = await fetchPDFs();
+        const updatedPdfs = pdfs.filter(pdf => pdf.id !== id);
+        await savePDFs(updatedPdfs);
         displayAllPDFs();
     }
 } 
