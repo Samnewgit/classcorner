@@ -12,6 +12,13 @@ let keySequence = [];
 const secretSequence = ['Control', 'Alt', 'a'];
 let lastKeyTime = 0;
 
+// Initialize UI based on authentication
+function updateUIState() {
+    if (loginBtn) {
+        loginBtn.textContent = isAuthenticated ? 'Logout' : 'Login';
+    }
+}
+
 // Handle key combinations
 document.addEventListener('keydown', (e) => {
     const currentTime = new Date().getTime();
@@ -49,42 +56,61 @@ function checkHash() {
 }
 
 // Event Listeners
-loginBtn.addEventListener('click', () => {
-    loginModal.style.display = 'block';
-});
+if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+        if (!isAuthenticated) {
+            loginModal.style.display = 'block';
+        } else {
+            // Handle logout
+            isAuthenticated = false;
+            localStorage.removeItem('isAuthenticated');
+            localStorage.removeItem('username');
+            updateUIState();
+            const currentPath = window.location.pathname;
+            const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+            window.location.href = basePath + 'index.html';
+        }
+    });
+}
 
-closeBtn.addEventListener('click', () => {
-    loginModal.style.display = 'none';
-});
-
-window.addEventListener('click', (event) => {
-    if (event.target === loginModal) {
+if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
         loginModal.style.display = 'none';
-    }
-});
+    });
+}
+
+if (loginModal) {
+    window.addEventListener('click', (event) => {
+        if (event.target === loginModal) {
+            loginModal.style.display = 'none';
+        }
+    });
+}
 
 // Handle login form submission
-loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    const username = document.getElementById('username').value;
-    const otp = document.getElementById('otp').value;
-
-    if (username === 'Camus' && otp === '12may') {
-        isAuthenticated = true;
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('username', username);
-        loginModal.style.display = 'none';
-        loginBtn.textContent = 'Logout';
+if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
         
-        // Use absolute path for dashboard
-        const currentPath = window.location.pathname;
-        const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
-        window.location.href = basePath + 'dashboard.html';
-    } else {
-        alert('Invalid credentials');
-    }
-});
+        const username = document.getElementById('username').value;
+        const otp = document.getElementById('otp').value;
+
+        if (username === 'Camus' && otp === '12may') {
+            isAuthenticated = true;
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('username', username);
+            loginModal.style.display = 'none';
+            updateUIState();
+            
+            // Use absolute path for dashboard
+            const currentPath = window.location.pathname;
+            const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+            window.location.href = basePath + 'dashboard.html';
+        } else {
+            alert('Invalid credentials');
+        }
+    });
+}
 
 // Check authentication status on page load
 document.addEventListener('DOMContentLoaded', () => {
@@ -93,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (authStatus === 'true') {
         isAuthenticated = true;
-        loginBtn.textContent = 'Logout';
+        updateUIState();
         
         if (currentPath.includes('dashboard.html')) {
             // Already on dashboard, do nothing
@@ -107,19 +133,5 @@ document.addEventListener('DOMContentLoaded', () => {
         // Not authenticated and trying to access dashboard
         const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
         window.location.href = basePath + 'index.html';
-    }
-
-    // Handle logout
-    if (loginBtn) {
-        loginBtn.addEventListener('click', () => {
-            if (isAuthenticated) {
-                isAuthenticated = false;
-                localStorage.removeItem('isAuthenticated');
-                localStorage.removeItem('username');
-                loginBtn.textContent = 'Login';
-                const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
-                window.location.href = basePath + 'index.html';
-            }
-        });
     }
 }); 
